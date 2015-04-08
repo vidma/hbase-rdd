@@ -272,7 +272,7 @@ final class HFileSeqRDD[K: ClassTag, V](seqRdd: RDD[(K, Seq[V])]) extends HFileR
   def loadToHBase(tableName: String, cFamilyStr: String, headers: Seq[String])(implicit config: HBaseConfig) = {
     val sc = seqRdd.context
     val headersBytes = sc.broadcast(headers map (_.getBytes))
-    val rdd = seqRdd.map { case (k, v) => (k, headersBytes.value zip v) }
+    val rdd = seqRdd.mapValues { v => headersBytes.value zip v }
     super.loadToHBase(rdd, tableName, cFamilyStr)
   }
 }
